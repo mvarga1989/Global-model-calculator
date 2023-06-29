@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>GGM Resolution Calculator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+    }
+    
+    h1 {
+      color: #333;
+      text-align: center;
+    }
+    
+    .form-container {
+      max-width: 400px;
+      margin: 0 auto;
+    }
+    
+    .form-group {
+      margin-bottom: 20px;
+    }
+    
+    .form-label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+    
+    .form-input {
+      width: 100%;
+      padding: 10px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    
+    .form-button {
+      display: block;
+      width: 100%;
+      padding: 10px;
+      font-size: 16px;
+      background-color: #4CAF50;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    
+    .result {
+      margin-top: 20px;
+      padding: 10px;
+      background-color: #f5f5f5;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <h1>GGM Resolution Calculator</h1>
+  
+  <div class="form-container">
+    <div class="form-group">
+      <label class="form-label" for="type">Type:</label>
+      <select class="form-input" id="type">
+        <option value="1">nmax</option>
+        <option value="2">spatial resolution (km)</option>
+        <option value="3">minimum wavelength (km)</option>
+      </select>
+    </div>
+    
+    <div class="form-group">
+      <label class="form-label" for="inputValue">Value:</label>
+      <input class="form-input" type="number" id="inputValue" step="0.01" required>
+    </div>
+    
+    <div class="form-group">
+      <button class="form-button" onclick="calculate()">Calculate</button>
+    </div>
+    
+    <div id="result" class="result"></div>
+  </div>
+  
+  <script>
+    function calculate() {
+      const typeInput = document.getElementById('type');
+      const inputValue = document.getElementById('inputValue');
+      
+      const type = parseInt(typeInput.value);
+      const value = parseFloat(inputValue.value);
+      
+      if (isNaN(value) || value < 0) {
+        document.getElementById('result').innerHTML = '<p class="error">Please enter a valid value.</p>';
+        return;
+      }
+      
+      const R_km = 6378.137;
+      let result = '';
+      
+      if (type === 1) {
+        const nmax = value;
+        result += 'nmax: ' + nmax + '<br>';
+        
+        const resolution = Math.PI * R_km / nmax;
+        result += 'Spatial Resolution: ' + resolution.toFixed(2) + ' km<br>';
+        
+        const wavelength = 2 * Math.PI * R_km / nmax;
+        result += 'Minimum Wavelength: ' + wavelength.toFixed(2) + ' km';
+      } else if (type === 2) {
+        const resolution = value;
+        result += 'Spatial Resolution: ' + resolution + ' km<br>';
+        
+        const nmax = Math.PI * R_km / resolution;
+        result += 'nmax: ' + nmax.toFixed(2) + '<br>';
+        
+        const wavelength = 2 * Math.PI * R_km / nmax;
+        result += 'Minimum Wavelength: ' + wavelength.toFixed(2) + ' km';
+      } else if (type === 3) {
+        const wavelength = value;
+        result += 'Minimum Wavelength: ' + wavelength + ' km<br>';
+        
+        const nmax = 2 * Math.PI * R_km / wavelength;
+        result += 'nmax: ' + nmax.toFixed(2) + '<br>';
+        
+        const resolution = Math.PI * R_km / nmax;
+        result += 'Spatial Resolution: ' + resolution.toFixed(2) + ' km';
+      }
+      
+      document.getElementById('result').innerHTML = result;
+    }
+  </script>
+</body>
+</html>
