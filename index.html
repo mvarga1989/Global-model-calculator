@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>GGM Resolution Calculator</title>
+  <title>Convert between spherical harmonic degree, resolution, and minumum resolvable wavelength</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -66,7 +66,7 @@
   <div class="form-container">
     <div class="form-group">
       <label class="form-label" for="type">Type:</label>
-      <select class="form-input" id="type">
+      <select class="form-input" id="type" onchange="updateValueField()">
         <option value="1">nmax</option>
         <option value="2">spatial resolution (km)</option>
         <option value="3">minimum wavelength (km)</option>
@@ -79,6 +79,11 @@
     </div>
     
     <div class="form-group">
+      <label class="form-label" for="radius">Radius (km):</label>
+      <input class="form-input" type="number" id="radius" step="0.01" value="6378.137" required>
+    </div>
+    
+    <div class="form-group">
       <button class="form-button" onclick="calculate()">Calculate</button>
     </div>
     
@@ -86,19 +91,36 @@
   </div>
   
   <script>
-    function calculate() {
+    function updateValueField() {
       const typeInput = document.getElementById('type');
       const inputValue = document.getElementById('inputValue');
       
       const type = parseInt(typeInput.value);
-      const value = parseFloat(inputValue.value);
       
-      if (isNaN(value) || value < 0) {
-        document.getElementById('result').innerHTML = '<p class="error">Please enter a valid value.</p>';
+      if (type === 1) {
+        inputValue.placeholder = 'Enter nmax';
+      } else if (type === 2) {
+        inputValue.placeholder = 'Enter spatial resolution (km)';
+      } else if (type === 3) {
+        inputValue.placeholder = 'Enter minimum wavelength (km)';
+      }
+    }
+    
+    function calculate() {
+      const typeInput = document.getElementById('type');
+      const inputValue = document.getElementById('inputValue');
+      const radiusInput = document.getElementById('radius');
+      
+      const type = parseInt(typeInput.value);
+      const value = parseFloat(inputValue.value);
+      const radius = parseFloat(radiusInput.value);
+      
+      if (isNaN(value) || value < 0 || isNaN(radius) || radius < 0) {
+        document.getElementById('result').innerHTML = '<p class="error">Please enter valid values.</p>';
         return;
       }
       
-      const R_km = 6378.137;
+      const R_km = radius;
       let result = '';
       
       if (type === 1) {
